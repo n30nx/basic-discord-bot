@@ -65,13 +65,7 @@ async def play(ctx, *args):
     if not voice.is_playing():
         voice.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
         await ctx.send(f"Now Playing: {songTitle}")
-        return
-    else:
-        return
-		
-		
-		
-		
+    return
 
 @client.command()
 async def disconnect(ctx):
