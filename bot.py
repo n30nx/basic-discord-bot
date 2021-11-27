@@ -3,8 +3,11 @@ from time import sleep
 from discord.ext import commands
 from discord import utils
 import random
-import os
 import ffmpeg
+import validators
+import youtube_dl
+import asyncio
+from youtubesearchpython import VideosSearch
 
 client = commands.Bot(command_prefix="!") # You can change command prefix
 
@@ -30,30 +33,41 @@ async def connect(ctx):
 	else:
 		await ctx.send("I am already connected.")
 
+	
+YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
+FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 @client.command()
 async def play(ctx, *args):
-    words = ""
+    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+    arg = ""
     for item in args:
-        words += item + " "
-    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+        arg += item + " "
+       
+    if arg == "":
+        await ctx.send("Empty search")
+    global YDL_OPTIONS
+    global FFMPEG_OPTIONS
+
     if voice == None:
-        await connect(ctx)
-    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-
-    song = os.path.isfile("song.webm")
+        await bağlan(ctx)
+        await asyncio.sleep(3)
+        voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
     
-    try:
-        if song:
-            os.remove("song.webm")
-    except PermissionError:
-        await ctx.send("Please wait for the current audio to end or type !stop.")
-        return
+    if not validators.url(arg):
+        videosSearch = VideosSearch(arg, limit = 1).result()
+        url = videosSearch["result"][0]["link"]
 
-    os.system(f'youtube-dl -f "bestaudio[ext=webm]" "ytsearch:{words}"')
-    for file in os.listdir("./"):
-        if file.endswith(".webm"):
-            os.rename(file, "song.webm")
-    voice.play(discord.FFmpegPCMAudio("song.webm"))
+    with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+        info = ydl.extract_info(url, download=False)
+    url = info['formats'][0]['url']
+    songTitle = videosSearch["result"][0]["title"]
+
+    if not voice.is_playing():
+        voice.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
+        await ctx.send(f"Now Playing: {songTitle}")
+        return
+    else:
+        return
 		
 		
 		
