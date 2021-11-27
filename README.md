@@ -20,7 +20,7 @@
 # Clone the discord bot
 $ git clone https://github.com/n30nx/basic-discord-bot.git
 
-# cd to basic_discord_bot directory
+# cd to basic-discord-bot directory
 $ cd basic-discord-bot
 
 # Install the python's requirements.
