@@ -5,3 +5,5 @@ cffi>=1.14.4
 six>=1.15.0
 pycparser>=2.20
 youtube-dl>=2021.6.6
+validators>=0.18.2
+youtube-search-python>=1.5.2
