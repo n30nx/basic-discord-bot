@@ -6,7 +6,6 @@ import random
 import ffmpeg
 import validators
 import youtube_dl
-import asyncio
 from youtubesearchpython import VideosSearch
 
 client = commands.Bot(command_prefix="!") # You can change command prefix
@@ -49,8 +48,7 @@ async def play(ctx, *args):
     global FFMPEG_OPTIONS
 
     if voice == None:
-        await bağlan(ctx)
-        await asyncio.sleep(3)
+        await connect(ctx)
         voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
     
     if not validators.url(arg):
