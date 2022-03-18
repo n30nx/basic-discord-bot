@@ -38,11 +38,9 @@ FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconne
 @client.command()
 async def play(ctx, *args):
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    arg = ""
-    for item in args:
-        arg += item + " "
+    arg = ' '.join(args)
        
-    if arg == "":
+    if arg.replace(' ', '') == '':
         await ctx.send("Empty search")
     global YDL_OPTIONS
     global FFMPEG_OPTIONS
